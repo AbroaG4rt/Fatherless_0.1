@@ -702,7 +702,7 @@ DOM.btnEmailResult.addEventListener('click', async () => {
     DOM.btnEmailResult.disabled = true;
 
     try {
-     const response = await fetch("https://script.google.com/macros/s/AKfycbxThZWqduYccoUpQJxeTTkBJfqCQj9rVkoceKLKOdF1QzTF0cRi2XqwyCuIE-1ctfGgQA/exec", {
+     const response = await fetch("https://script.google.com/macros/s/AKfycbyy1_LtAV6nNDx7OhUZYmOp6Kr-d28zuHYRA_Z_-5QrGLQREQKhhEU8wBgjyoUCK6KFWA/exec", {
     method: "POST",
     body: JSON.stringify({
         nama: state.userInfo.nama,
