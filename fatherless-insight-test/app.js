@@ -702,28 +702,28 @@ DOM.btnEmailResult.addEventListener('click', async () => {
     DOM.btnEmailResult.disabled = true;
 
     try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbws6Bglrr2CXsHvXoFmM_kN3Of7Ot1Bx7Ixon3OBAF8ov-g7IvgdX58S1p10OXQXXlAUg/exec", {
-            method: "POST",
-            body: JSON.stringify({
-                nama: state.userInfo.nama,
-                umur: state.userInfo.umur,
-                kota: state.userInfo.kota,
-                email: state.userInfo.email,
-                AF: state.percentages['AF'] || 0,
-                FCC: state.percentages['FCC'] || 0,
-                FP: state.percentages['FP'] || 0,
-                FI: state.percentages['FI'] || 0,
-                PI: state.percentages['PI'] || 0,
-                RP: state.percentages['RP'] || 0,
-                ES: state.percentages['ES'] || 0,
-                AS: state.percentages['AS'] || 0,
-                SW: state.percentages['SW'] || 0,
-                AP: state.percentages['AP'] || 0,
-                EE: state.percentages['EE'] || 0,
-                type: state.archetypeTitle
-            }),
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8" // Menghindari pre-flight CORS block di GS endpoint
+       const response = await fetch("https://script.google.com/macros/s/AKfycbyOFiuML3xow0OTseAHZdgl_KTD0Ss3alc8U2JzB7xBXHAXkyn-1mIQYEoy1DxYHFZS3w/exec", {
+    method: "POST",
+    body: JSON.stringify({
+        nama: state.userInfo.nama,
+        umur: state.userInfo.umur,
+        kota: state.userInfo.kota,
+        email: state.userInfo.email,
+        AF: state.percentages['AF'] || 0,
+        FCC: state.percentages['FCC'] || 0,
+        FP: state.percentages['FP'] || 0,
+        FI: state.percentages['FI'] || 0,
+        PI: state.percentages['PI'] || 0,
+        RP: state.percentages['RP'] || 0,
+        ES: state.percentages['ES'] || 0,
+        AS: state.percentages['AS'] || 0,
+        SW: state.percentages['SW'] || 0,
+        AP: state.percentages['AP'] || 0,
+        EE: state.percentages['EE'] || 0,
+        type: state.archetypeTitle
+    }),
+    headers: {
+        "Content-Type": "application/json" // Menghindari pre-flight CORS block di GS endpoint
             }
         });
 
