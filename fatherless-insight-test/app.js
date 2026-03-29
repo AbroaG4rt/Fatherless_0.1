@@ -145,7 +145,9 @@ const state = {
         kota: '-',
         email: ''
     },
-    answers: {} // format: "AF_0": 5
+    answers: {}, // format: "AF_0": 5
+    percentages: {},
+    archetypeTitle: ''
 };
 
 const DIMENSION_LABELS = {
@@ -491,6 +493,8 @@ function calculateScores() {
         percentages[cat] = Math.round((results[cat] / maxScores[cat]) * 100);
     });
 
+    state.percentages = percentages;
+
     generateDynamicInsights(percentages);
     renderRadarChart(percentages);
 }
@@ -499,6 +503,7 @@ function generateDynamicInsights(scores) {
     // 1. Profile Identity (Random Archetype)
     // "Randomly assign from 12 archetypes" -> Sesuai request, assign random.
     const chosenArchetype = ARCHETYPES[Math.floor(Math.random() * ARCHETYPES.length)];
+    state.archetypeTitle = chosenArchetype.title;
     DOM.resUserName.textContent = `Nama: ${state.userInfo.nama} | Umur: ${state.userInfo.umur} | Kota: ${state.userInfo.kota}`;
     DOM.resArchetypeTitle.textContent = chosenArchetype.title;
     DOM.resArchetypeDesc.textContent = chosenArchetype.desc;
@@ -689,60 +694,45 @@ DOM.btnDownloadPdf.addEventListener('click', async () => {
 });
 
 // ==========================================
-// EMAIL INTEGRATION (FormSubmit)
+// GOOGLE APPS SCRIPT INTEGRATION (SAVE RESULTS)
 // ==========================================
 
 DOM.btnEmailResult.addEventListener('click', async () => {
-    // Jika tidak isi email di form, dilarang
-    if(!state.userInfo.email) {
-        alert("Anda tidak mengisi alamat email di awal tes. Silakan ulangi tes jika ingin fitur email.");
-        return;
-    }
-
-    DOM.btnEmailResult.innerHTML = `<i class="ri-loader-4-line ri-spin"></i> Mengirim...`;
+    DOM.btnEmailResult.innerHTML = `<i class="ri-loader-4-line ri-spin"></i> Menyimpan...`;
     DOM.btnEmailResult.disabled = true;
 
-    // Menggabungkan pesan insight menjadi satu string untuk FormSubmit
-    const rawMessage = `
-NAMA: ${state.userInfo.nama}
-UMUR: ${state.userInfo.umur}
-KOTA: ${state.userInfo.kota}
-
-=== HASIL TES ===
-ARCHETYPE: ${DOM.resArchetypeTitle.innerText}
-CORE SUMMARY: ${DOM.resCore.innerText}
-STRENGTHS: ${DOM.resStrengths.innerText}
-CHALLENGES: ${DOM.resChallenges.innerText}
-    `;
-
-    // Data payload menggunakan AJAX/Fetch ke formsubmit
-    // Note: abroa.gart@gmail.com is requested target email.
     try {
-        const response = await fetch("https://formsubmit.co/ajax/abroa.gart@gmail.com", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbws6Bglrr2CXsHvXoFmM_kN3Of7Ot1Bx7Ixon3OBAF8ov-g7IvgdX58S1p10OXQXXlAUg/exec", {
             method: "POST",
-            headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
             body: JSON.stringify({
-                _subject: "Salinan Hasil Fatherless Insight Test Anda",
-                email: state.userInfo.email, // email CC back to user
-                _replyto: state.userInfo.email,
-                name: state.userInfo.nama,
-                message: rawMessage
-            })
+                nama: state.userInfo.nama,
+                umur: state.userInfo.umur,
+                kota: state.userInfo.kota,
+                email: state.userInfo.email,
+                AF: state.percentages['AF'] || 0,
+                FCC: state.percentages['FCC'] || 0,
+                FP: state.percentages['FP'] || 0,
+                FI: state.percentages['FI'] || 0,
+                PI: state.percentages['PI'] || 0,
+                RP: state.percentages['RP'] || 0,
+                ES: state.percentages['ES'] || 0,
+                AS: state.percentages['AS'] || 0,
+                SW: state.percentages['SW'] || 0,
+                AP: state.percentages['AP'] || 0,
+                EE: state.percentages['EE'] || 0,
+                type: state.archetypeTitle
+            }),
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8" // Menghindari pre-flight CORS block di GS endpoint
+            }
         });
 
-        if (response.ok) {
-            alert("Hasil tes berhasil dikirimkan ke email Anda!");
-            DOM.btnEmailResult.innerHTML = `<i class="ri-check-line"></i> Terkirim`;
-        } else {
-            throw new Error('Gagal dari server');
-        }
+        alert("Data hasil tes berhasil disimpan!");
+        DOM.btnEmailResult.innerHTML = `<i class="ri-check-line"></i> Tersimpan`;
     } catch(err) {
         console.error(err);
-        alert("Gagal mengirim email. Pastikan koneksi internet stabil.");
-        DOM.btnEmailResult.innerHTML = `<i class="ri-mail-send-line"></i> Kirim Ulang Email`;
+        alert("Gagal menyimpan data. Pastikan koneksi internet stabil.");
+        DOM.btnEmailResult.innerHTML = `<i class="ri-save-line"></i> Coba Simpan Lagi`;
         DOM.btnEmailResult.disabled = false;
     }
 });
