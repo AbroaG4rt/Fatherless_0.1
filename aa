@@ -1,0 +1,33 @@
+<button onclick="test()">Test Kirim</button>
+
+<script>
+function test() {
+  fetch("URL_KAMU", {
+    method: "POST",
+    body: JSON.stringify({
+      nama: "TEST",
+      umur: "21",
+      kota: "Malang",
+      email: "test@gmail.com",
+      AF: 50,
+      FCC: 60,
+      FP: 40,
+      FI: 30,
+      PI: 70,
+      RP: 65,
+      ES: 80,
+      AS: 55,
+      SW: 45,
+      AP: 60,
+      EE: 50,
+      type: "TEST TYPE"
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(res => res.json())
+  .then(data => alert("SUCCESS"))
+  .catch(err => alert("ERROR"));
+}
+</script>
