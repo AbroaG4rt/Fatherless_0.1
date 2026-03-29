@@ -702,7 +702,7 @@ DOM.btnEmailResult.addEventListener('click', async () => {
     DOM.btnEmailResult.disabled = true;
 
     try {
-       const response = await fetch("https://script.google.com/macros/s/AKfycbw9yxqwk8gT-vKGDnsUIj9Vh6wRKpGrLUc1LoGGvukaWGAltvg7BuygePNY3MYPRq5mAQ/exec", {
+     const response = await fetch("https://script.google.com/macros/s/AKfycbxThZWqduYccoUpQJxeTTkBJfqCQj9rVkoceKLKOdF1QzTF0cRi2XqwyCuIE-1ctfGgQA/exec", {
     method: "POST",
     body: JSON.stringify({
         nama: state.userInfo.nama,
@@ -723,10 +723,13 @@ DOM.btnEmailResult.addEventListener('click', async () => {
         type: state.archetypeTitle
     }),
     headers: {
-        "Content-Type": "text/plain;charset=utf-8" // Menghindari pre-flight CORS block di GS endpoint
-            }
-        });
+        "Content-Type": "text/plain;charset=utf-8"
+    }
+});
 
+const result = await response.text();
+console.log(result);
+      
         alert("Data hasil tes berhasil disimpan!");
         DOM.btnEmailResult.innerHTML = `<i class="ri-check-line"></i> Tersimpan`;
     } catch(err) {
