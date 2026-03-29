@@ -702,7 +702,7 @@ DOM.btnEmailResult.addEventListener('click', async () => {
     DOM.btnEmailResult.disabled = true;
 
     try {
-       const response = await fetch("https://script.google.com/macros/s/AKfycbyOFiuML3xow0OTseAHZdgl_KTD0Ss3alc8U2JzB7xBXHAXkyn-1mIQYEoy1DxYHFZS3w/exec", {
+       const response = await fetch("https://script.google.com/macros/s/AKfycbw9yxqwk8gT-vKGDnsUIj9Vh6wRKpGrLUc1LoGGvukaWGAltvg7BuygePNY3MYPRq5mAQ/exec", {
     method: "POST",
     body: JSON.stringify({
         nama: state.userInfo.nama,
@@ -723,7 +723,7 @@ DOM.btnEmailResult.addEventListener('click', async () => {
         type: state.archetypeTitle
     }),
     headers: {
-        "Content-Type": "application/json" // Menghindari pre-flight CORS block di GS endpoint
+        "Content-Type": "text/plain;charset=utf-8" // Menghindari pre-flight CORS block di GS endpoint
             }
         });
 
