@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fatherless Insight Test</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+        <i class="ri-moon-line" id="theme-icon"></i>
+    </button>
+
+    <div class="app-container">
+        <!-- Landing Screen -->
+        <section id="landing-screen" class="screen view-active">
+            <div class="logo-area">
+                <i class="ri-mind-map ri-3x logo-icon"></i>
+                <h1 class="main-title">Fatherless Insight Test</h1>
+            </div>
+            <p class="subtitle">Sebuah tes psikologis mendalam untuk mengukur dan memahami dampak ketidakhadiran figur ayah dalam kehidupan struktural dan emosional Anda.</p>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <i class="ri-file-chart-line"></i>
+                    <span>Analisis 11 Dimensi Psikologis</span>
+                </div>
+                <div class="feature-item">
+                    <i class="ri-brain-line"></i>
+                    <span>Pemetaan Pola & Akar Emosi</span>
+                </div>
+            </div>
+
+            <button id="btn-start" class="btn-primary">Mulai Asesmen <i class="ri-arrow-right-line"></i></button>
+            <p class="disclaimer">Data Anda rahasia dan aman. Dibutuhkan waktu sekitar 10-15 menit.</p>
+        </section>
+
+        <!-- User Info Screen -->
+        <section id="user-info-screen" class="screen hidden">
+            <div class="card header-card">
+                <h2>Profil Anda</h2>
+                <p>Silakan isi detail Anda sebelum memulai untuk menyesuaikan laporan (Opsional bisa dilewati dengan data anonim).</p>
+            </div>
+            
+            <div class="card form-card">
+                <form id="user-form">
+                    <div class="form-group">
+                        <label for="input-nama">Nama Panggilan *</label>
+                        <input type="text" id="input-nama" required placeholder="Cth: Sarah">
+                    </div>
+                    <div class="form-group flex-group">
+                        <div class="sub-group">
+                            <label for="input-umur">Umur *</label>
+                            <input type="number" id="input-umur" required placeholder="Cth: 24">
+                        </div>
+                        <div class="sub-group">
+                            <label for="input-kota">Kota Asal *</label>
+                            <input type="text" id="input-kota" required placeholder="Cth: Jakarta">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-email">Email (Opsional)</label>
+                        <input type="email" id="input-email" placeholder="Untuk menerima hasil via email">
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" id="btn-back-landing">Kembali</button>
+                        <button type="submit" class="btn-primary" id="btn-to-test">Lanjut ke Tes <i class="ri-arrow-right-line"></i></button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Test Screen -->
+        <section id="test-screen" class="screen hidden">
+            <div class="progress-container">
+                <div class="progress-bar-bg">
+                    <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progress-percentage">0%</span> diselesaikan
+                </div>
+            </div>
+
+            <div id="question-container" class="question-container">
+                <!-- Pertanyaan akan dirender dinamis via JS -->
+            </div>
+
+            <div class="test-navigation">
+                <button id="btn-prev-test" class="btn-secondary"><i class="ri-arrow-left-line"></i> Sebelumnya</button>
+                <button id="btn-next-test" class="btn-primary btn-disabled" disabled>Selanjutnya <i class="ri-arrow-right-line"></i></button>
+            </div>
+        </section>
+
+        <!-- Loading Screen -->
+        <section id="loading-screen" class="screen hidden">
+            <div class="loading-wrapper">
+                <div class="spinner"></div>
+                <h2>Menganalisis Pola Emosional Anda...</h2>
+                <p>Sistem memproses 11 dimensi psikologis dan memuat Insight Engine.</p>
+            </div>
+        </section>
+
+        <!-- Result Screen -->
+        <section id="result-screen" class="screen hidden">
+            
+            <div id="pdf-content-area">
+                <!-- Header PDF -->
+                <div class="result-header">
+                    <h2>Laporan Psikologis Anda</h2>
+                    <h3 id="res-user-name">Nama: - | Umur: - | Kota: -</h3>
+                </div>
+
+                <div class="card summary-card archetype-card">
+                    <h4 class="section-badge">Profil Identitas (Archetype)</h4>
+                    <h1 id="res-archetype-title">The Independent Survivor</h1>
+                    <p id="res-archetype-desc" class="insight-text">Menyimpan kemandirian sebagai bentuk perlindungan diri, Anda memiliki resiliensi yang tinggi namun kerap menahan kerentanan di hadapan orang lain.</p>
+                </div>
+
+                <div class="card report-section">
+                    <h3 class="section-title">Visualisasi Dimensi (Spider Chart)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="insight-grid">
+                    <!-- Core Insights -->
+                    <div class="card insight-item">
+                        <i class="ri-heart-pulse-line icon-accent"></i>
+                        <h4>Core Summary & Kondisi Emosional</h4>
+                        <p id="res-core" class="insight-text">...</p>
+                    </div>
+                    
+                    <div class="card insight-item">
+                        <i class="ri-shield-star-line icon-accent"></i>
+                        <h4>Kekuatan (Strengths)</h4>
+                        <p id="res-strengths" class="insight-text">...</p>
+                    </div>
+
+                    <div class="card insight-item">
+                        <i class="ri-emotion-sad-line icon-accent"></i>
+                        <h4>Tantangan Psikologis</h4>
+                        <p id="res-challenges" class="insight-text">...</p>
+                    </div>
+
+                    <div class="card insight-item">
+                        <i class="ri-user-heart-line icon-accent"></i>
+                        <h4>Pola Hubungan (Relationship Pattern)</h4>
+                        <p id="res-relations" class="insight-text">...</p>
+                    </div>
+
+                    <div class="card insight-item">
+                        <i class="ri-user-smile-line icon-accent"></i>
+                        <h4>Diri & Identitas (Self-Worth & Security)</h4>
+                        <p id="res-identity" class="insight-text">...</p>
+                    </div>
+                    
+                    <div class="card insight-item">
+                        <i class="ri-group-line icon-accent"></i>
+                        <h4>Perilaku Sosial & Otoritas</h4>
+                        <p id="res-authority" class="insight-text">...</p>
+                    </div>
+                    
+                    <!-- Full Width -> Healing Path -->
+                    <div class="card insight-item full-width highlight-border">
+                        <i class="ri-leaf-line icon-accent"></i>
+                        <h4>Jalur Penyembuhan (Healing & Growth Path)</h4>
+                        <div id="res-healing-path" class="insight-text">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disclaimer for PDF -->
+                <p class="final-disclaimer">Disclaimer: Tes ini bukan merupakan diagnosis klinis. Digunakan untuk self-awareness dan pengembangan diri berdasarkan pola relasi terhadap figur ayah.</p>
+            </div>
+
+            <!-- Action Area (Won't be printed in PDF) -->
+            <div class="action-footer">
+                <button id="btn-download-pdf" class="btn-primary"><i class="ri-file-download-line"></i> Download PDF</button>
+                <button id="btn-email-result" class="btn-secondary"><i class="ri-mail-send-line"></i> Kirim ke Email</button>
+                <button id="btn-show-qr" class="btn-secondary"><i class="ri-qr-code-line"></i> Tampilkan QR Code</button>
+            </div>
+
+            <!-- QR Modal Placeholder -->
+            <div id="qr-modal" class="modal hidden">
+                <div class="modal-content">
+                    <span id="close-qr" class="close-btn">&times;</span>
+                    <h3>Pindai atau Unduh Kode QR</h3>
+                    <div id="qrcode-container"></div>
+                    <button id="btn-download-qr" class="btn-primary mt-3">Download QR Image</button>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
