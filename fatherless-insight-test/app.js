@@ -697,48 +697,86 @@ DOM.btnDownloadPdf.addEventListener('click', async () => {
 // GOOGLE APPS SCRIPT INTEGRATION (SAVE RESULTS)
 // ==========================================
 
-DOM.btnEmailResult.addEventListener('click', async () => {
-    DOM.btnEmailResult.innerHTML = `<i class="ri-loader-4-line ri-spin"></i> Menyimpan...`;
-    DOM.btnEmailResult.disabled = true;
+function doPost(e) {
+  try {
+    const sheet = SpreadsheetApp.openById("1bbhg9GuDzjO1MU5VuFHO9fk6IY2YSukyFi3t5sWtkLo")
+      .getSheetByName("Fatherless Test Data");
 
-    try {
-     const response = await fetch("https://script.google.com/macros/s/AKfycbyy1_LtAV6nNDx7OhUZYmOp6Kr-d28zuHYRA_Z_-5QrGLQREQKhhEU8wBgjyoUCK6KFWA/exec", {
-    method: "POST",
-    body: JSON.stringify({
-        nama: state.userInfo.nama,
-        umur: state.userInfo.umur,
-        kota: state.userInfo.kota,
-        email: state.userInfo.email,
-        AF: state.percentages['AF'] || 0,
-        FCC: state.percentages['FCC'] || 0,
-        FP: state.percentages['FP'] || 0,
-        FI: state.percentages['FI'] || 0,
-        PI: state.percentages['PI'] || 0,
-        RP: state.percentages['RP'] || 0,
-        ES: state.percentages['ES'] || 0,
-        AS: state.percentages['AS'] || 0,
-        SW: state.percentages['SW'] || 0,
-        AP: state.percentages['AP'] || 0,
-        EE: state.percentages['EE'] || 0,
-        type: state.archetypeTitle
-    }),
-    headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-    }
-});
+    const data = JSON.parse(e.postData.contents);
 
-const result = await response.text();
-console.log(result);
-      
-        alert("Data hasil tes berhasil disimpan!");
-        DOM.btnEmailResult.innerHTML = `<i class="ri-check-line"></i> Tersimpan`;
-    } catch(err) {
-        console.error(err);
-        alert("Gagal menyimpan data. Pastikan koneksi internet stabil.");
-        DOM.btnEmailResult.innerHTML = `<i class="ri-save-line"></i> Coba Simpan Lagi`;
-        DOM.btnEmailResult.disabled = false;
-    }
-});
+    const row = [
+      new Date(),
+      data.nama || "",
+      data.umur || "",
+      data.kota || "",
+      data.email || "",
+      data.AF || 0,
+      data.FCC || 0,
+      data.FP || 0,
+      data.FI || 0,
+      data.PI || 0,
+      data.RP || 0,
+      data.ES || 0,
+      data.AS || 0,
+      data.SW || 0,
+      data.AP || 0,
+      data.EE || 0,
+      data.type || ""
+    ];
+
+    // ✅ Simpan ke spreadsheet
+    sheet.appendRow(row);
+
+    // ===============================
+    // ✅ FORMAT EMAIL (TABLE HTML)
+    // ===============================
+    const htmlTable = `
+      <h2>Hasil Test Fatherless</h2>
+      <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse;">
+        <tr>
+          <th>Timestamp</th>
+          <th>Nama</th>
+          <th>Umur</th>
+          <th>Kota</th>
+          <th>Email</th>
+          <th>AF</th>
+          <th>FCC</th>
+          <th>FP</th>
+          <th>FI</th>
+          <th>PI</th>
+          <th>RP</th>
+          <th>ES</th>
+          <th>AS</th>
+          <th>SW</th>
+          <th>AP</th>
+          <th>EE</th>
+          <th>Type</th>
+        </tr>
+        <tr>
+          ${row.map(val => `<td>${val}</td>`).join("")}
+        </tr>
+      </table>
+    `;
+
+    // ===============================
+    // ✅ KIRIM EMAIL
+    // ===============================
+    MailApp.sendEmail({
+      to: "kohanathings@gmail.com",
+      subject: "📊 Hasil Test Fatherless Baru",
+      htmlBody: htmlTable
+    });
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
 
 // ==========================================
 // QR CODE GENERATOR
